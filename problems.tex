@@ -1,0 +1,73 @@
+\section{Problem Classification}
+
+\subsection{Overview of Selected Fitness Problems}
+In this study, we analyze the performance of various optimization algorithms across a diverse set of benchmark fitness problems, each chosen for its unique characteristics and challenges. These problems test the algorithms' ability to handle varying types of landscapes, constraints, and optimization objectives. The problems considered include:
+\begin{itemize}
+    \item \textbf{OneMax}: A binary optimization problem where the objective is to maximize the number of 1's in a binary string. Given a binary string \(x = (x_1, x_2, ..., x_n)\), the fitness function is defined as:
+    \[
+    f(x) = \sum_{i=1}^{n} x_i
+    \]
+    The challenge in OneMax lies in its simplicity, which makes it a good test for how well an algorithm exploits the search space.
+
+    \item \textbf{FlipFlop}: A binary optimization problem where the goal is to maximize the number of alternating sequences (i.e., 1 followed by 0, and vice versa). The fitness function is given by:
+    \[
+    f(x) = \sum_{i=1}^{n-1} \mathbb{1}(x_i \neq x_{i+1})
+    \]
+    where \( \mathbb{1} \) is an indicator function. FlipFlop rewards alternating patterns and penalizes long sequences of the same value.
+
+    \item \textbf{FourPeaks}: A more complex binary problem where both local and global optima exist. The fitness function rewards strings that have long sequences of consecutive 1's or 0's:
+    \[
+    f(x) = \max\left(\text{count}(0^T), \text{count}(1^T)\right) + \text{bonus}(x)
+    \]
+    where \( \text{count}(0^T) \) and \( \text{count}(1^T) \) count consecutive sequences of 0's or 1's of length \(T\), and \( \text{bonus}(x) \) adds an extra reward when both are long.
+
+    \item \textbf{Knapsack Problem}: A combinatorial problem where the objective is to maximize the total value of selected items while staying within a weight limit. Given a set of items, each with a value \(v_i\) and weight \(w_i\), the objective is to maximize:
+    \[
+    f(x) = \sum_{i=1}^{n} v_i x_i
+    \]
+    subject to:
+    \[
+    \sum_{i=1}^{n} w_i x_i \leq W
+    \]
+    where \( W \) is the weight limit and \( x_i \in \{0, 1\} \) represents whether item \(i\) is selected.
+
+    \item \textbf{Travelling Salesman Problem (TSP)}: A permutation-based problem where the objective is to find the shortest possible route that visits each city exactly once and returns to the starting point. The fitness function for a TSP instance with cities \(1, 2, ..., n\) is:
+    \[
+    f(\sigma) = \sum_{i=1}^{n-1} d(\sigma(i), \sigma(i+1)) + d(\sigma(n), \sigma(1))
+    \]
+    where \( \sigma \) is a permutation of cities and \( d(i,j) \) represents the distance between cities \(i\) and \(j\).
+
+    \item \textbf{Queens Problem}: A permutation problem where the objective is to place \( n \) queens on an \( n \times n \) chessboard such that no two queens threaten each other. The challenge is to find a configuration of queens where no two queens share the same row, column, or diagonal. The fitness function counts the number of conflicts:
+    \[
+    f(x) = - \text{number of conflicts}
+    \]
+    where \( x \) is a permutation representing the queen positions on the board.
+\end{itemize}
+
+\subsection{Classification of Problems}
+The optimization problems are classified into three main groups: \textit{binary optimization problems}, \textit{permutation problems}, and \textit{combinatorial problems}. Each group presents distinct challenges for optimization algorithms due to their different characteristics, search space size, and constraints.
+
+\subsubsection{Binary Optimization Problems}
+Binary optimization problems, where decision variables are restricted to the values 0 or 1, include tasks such as OneMax, FlipFlop, FourPeaks, SixPeaks and ContinuousPeaks. These problems pose a variety of challenges. For instance, \textbf{OneMax} tests how efficiently an algorithm can exploit the search space by quickly converging to the global optimum. On the other hand, \textbf{FourPeaks} and \textbf{SixPeaks} introduce multiple local optima, making it difficult for algorithms to escape local solutions and find the global optimum. The size of the search space in binary problems grows exponentially with the number of variables, presenting scalability challenges for optimization algorithms.
+
+\subsubsection{Permutation Problems}
+Permutation problems, including the TSP and the QP, involve optimizing the order or arrangement of elements.
+In \textbf{TSP}, the search space size is factorial, as the number of possible solutions (routes) is \(n!\) for \(n\) cities. This makes the problem computationally intractable for large values of \(n\). Similarly, the \textbf{QP} presents a factorial search space where constraints (no queens can threaten each other) must be satisfied.
+
+\subsubsection{Combinatorial Problems}
+Combinatorial problems involve selecting the optimal combination of items from a set. The key combinatorial problem studied is KP. In the \textbf{KP}, the challenge is to navigate the combinatorial explosion of possible item selections while adhering to the weight constraint. The search space grows exponentially with the number of items, and the presence of the weight constraint adds an additional layer of complexity that must be managed. This problem highlights the importance of balancing exploration of the solution space with exploitation of known good solutions, especially when the space is heavily constrained.
+
+\subsection{Challenges for Optimization Algorithms}
+Each problem group presents unique challenges that affect the performance of optimization algorithms. This is summarised in Table~\ref{tab:challenges}.
+\begin{table*}[h!]
+    \centering
+    \caption{Summary of Challenges for Optimization Algorithms Across Problem Types}
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        \textbf{Problem Group} & \textbf{Example Problems} & \textbf{Main Challenges} & \textbf{Search Space Complexity} \\ \hline
+        \textbf{Binary Optimization} & OneMax, FlipFlop, FourPeaks & Local minima (e.g., FourPeaks) & Exponential in problem size \\ \hline
+        \textbf{Permutation Problems} & TSP, Queens Problem & Local vs. global optima, factorial search space & Factorial (\(n!\)) \\ \hline
+        \textbf{Combinatorial Problems} & Knapsack Problem & Handling constraints, finding optimal combinations & Exponential in item number \\ \hline
+    \end{tabular}
+    \label{tab:challenges}
+\end{table*}

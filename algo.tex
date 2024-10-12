@@ -1,0 +1,86 @@
+\section{RANDOMIZED OPTIMIZATION ALGORITHMS}
+One of the key challenges in optimization lies in selecting the appropriate algorithm for a given problem type. The effectiveness of an algorithm depends on factors like whether the problem involves continuous or discrete variables, whether the landscape is convex or non-convex, and the complexity of the constraints. Therefore, choosing the right algorithm is crucial to balancing exploration and exploitation of the search space, avoiding local minima, and achieving near-optimal solutions. In this paper, we explain the four most widely used randomized optimization algorithms: Randomized Hill Climbing (RHC), Simulated Annealing (SA), Genetic Algorithms (GA), and MIMIC (Mutual Information Maximizing Input Clustering). Each of these algorithms introduces randomness in different ways to enhance exploration and avoid getting trapped in local minima.
+\subsection{Randomized Hill Climbing (RHC)}
+RHC \cite{liu2016banditbasedrandommutationhillclimbing} is a local search algorithm that iteratively improves a candidate solution by exploring its neighborhood. The algorithm randomly selects a neighbor of the current solution and moves to that neighbor if it offers a better objective function value. If no better neighbors are found, the algorithm stops. RHC introduces randomness by restarting the search from a random point when it reaches a local optimum, which helps explore different regions of the search space. RHC uses the following working principle, summarized below:
+
+\begin{enumerate}
+    \item \textbf{Start:} Initialize a random solution $x_0$.
+    \item \textbf{Neighbor Selection:} At each iteration, randomly select a neighboring solution $x' \in N(x)$ from the neighborhood of the current solution $x$.
+    \item \textbf{Move:} If the objective function $f(x')$ is better than $f(x)$, move to $x'$, i.e., 
+    \[
+    x \leftarrow x'.
+    \]
+    \item \textbf{Restart:} When no improvement is found, restart the algorithm from a new random solution.
+\end{enumerate}
+
+At each iteration $t$, the update rule is defined as follows:
+\[
+x_{t+1} = 
+\begin{cases} 
+x_t & \text{if } f(x_t) \geq f(x') \\ 
+x' & \text{if } f(x') > f(x_t) 
+\end{cases}
+\]
+
+Here, $x' \in N(x_t)$ is a randomly selected neighbor of the current solution $x_t$. RHC is simple but can easily get stuck in local minima without proper restarts.
+
+\subsection{Simulated Annealing (SA)}
+SA is an extension of hill climbing that introduces a probability of accepting worse solutions to escape local minima. The algorithm is inspired by the annealing process in metallurgy, where materials are slowly cooled to achieve a low-energy configuration. The acceptance of worse solutions is controlled by a temperature parameter $T$, which decreases over time. As the temperature decreases, the algorithm becomes more focused on exploiting local improvements.
+
+\begin{enumerate}
+    \item \textbf{Start:} Initialize with a random solution $x_0$ and a high temperature $T_0$.
+    \item \textbf{Neighbor Selection:} At each iteration, select a neighboring solution $x' \in N(x)$.
+    \item \textbf{Acceptance Criterion:} Move to $x'$ if it improves the objective function ($f(x') > f(x)$). If $f(x') \leq f(x)$, accept $x'$ with probability:
+    \[
+    P(\text{accept}) = \exp\left(\frac{f(x') - f(x)}{T}\right),
+    \]
+    where $T$ is the current temperature.
+    \item \textbf{Cooling Schedule:} Reduce the temperature according to a cooling schedule, typically 
+    \[
+    T(t) = T_0 \times \alpha^t,
+    \]
+    where $\alpha \in (0, 1)$ is the cooling factor and $t$ is the iteration number.
+\end{enumerate}
+
+Simulated Annealing allows the search to explore a wide range of solutions at high temperatures and gradually focuses on the best solutions as the temperature decreases.
+
+\subsection{Genetic Algorithms (GA)}
+GA are inspired by the process of natural selection, where a population of solutions evolves over time. GAs maintain a population of candidate solutions, which are recombined and mutated to explore the solution space. GAs are particularly effective for large and complex search spaces, such as those found in combinatorial problems.
+
+\begin{enumerate}
+    \item \textbf{Initialization:} Generate an initial population $P$ of candidate solutions randomly.
+    \item \textbf{Selection:} Select parent solutions from the population based on their fitness $f(x)$. Higher-fitness solutions are more likely to be selected.
+    \item \textbf{Crossover:} Combine two parent solutions $x_1$ and $x_2$ to create offspring $x_{\text{child}}$ using a crossover operator. For example, in single-point crossover:
+    \[
+    x_{\text{child}}[i] =
+    \begin{cases} 
+    x_1[i] & \text{if } i \leq \text{cross-point} \\ 
+    x_2[i] & \text{if } i > \text{cross-point}
+    \end{cases}
+    \]
+    \item \textbf{Mutation:} Apply mutation to the offspring with some probability to introduce randomness and explore new areas of the solution space.
+    \item \textbf{Replacement:} Replace the least-fit members of the population with the new offspring.
+\end{enumerate}
+
+The population evolves over time, and the fittest individuals are selected to produce the next generation. The algorithm terminates after a fixed number of generations or when the population converges.
+
+\subsection{MIMIC (Mutual Information Maximizing Input Clustering)}
+MIMIC is a probabilistic optimization algorithm that constructs a probabilistic model of the solution space and uses this model to generate new candidate solutions. It is particularly effective for combinatorial problems where the variables are interdependent. MIMIC builds a dependency tree based on mutual information between variables and samples solutions from this model.
+
+\begin{enumerate}
+    \item \textbf{Initialization:} Generate an initial population $P$ of random solutions.
+    \item \textbf{Model Building:} Construct a probabilistic model of the population by estimating the mutual information between variables. This model captures dependencies between decision variables.
+    \item \textbf{Sampling:} Generate new solutions by sampling from the probabilistic model. These new solutions are used to explore the search space.
+    \item \textbf{Selection:} Retain the top $k$ solutions based on their fitness and use these to update the probabilistic model.
+\end{enumerate}
+
+MIMIC balances exploration and exploitation by using probabilistic models to sample promising regions of the search space, making it highly efficient for large combinatorial problems.
+
+\textbf{Mutual Information} between two variables $X_i$ and $X_j$:
+\[
+I(X_i; X_j) = \sum_{x_i, x_j} p(x_i, x_j) \log \frac{p(x_i, x_j)}{p(x_i)p(x_j)},
+\]
+
+where $I(X_i; X_j)$ is the mutual information and $p(x_i, x_j)$ is the joint probability distribution.
+
+\textbf{Sampling:} Generate new solutions by sampling from the probabilistic model based on the estimated mutual information structure.
